@@ -73,12 +73,12 @@ const Example = () => {
 
   const getMovies = async () => {
     const resp = await fetch(
-      `http://www.omdbapi.com/?s=batman&apikey=26332775`
+      `https://www.omdbapi.com/?s=batman&apikey=26332775`
     );
     const data = await resp.json();
     const movies = data.Search;
     const response = await fetch(
-      `http://www.omdbapi.com/?i=${movies[0].imdbID}&apikey=26332775`
+      `https://www.omdbapi.com/?i=${movies[0].imdbID}&apikey=26332775`
     );
     const res = await response.json();
     const movieInfoObj = res;
@@ -88,7 +88,7 @@ const Example = () => {
 
   const getMovieInfo = async index => {
     const res = await fetch(
-      `http://www.omdbapi.com/?i=${movies[index].imdbID}&apikey=26332775`
+      `https://www.omdbapi.com/?i=${movies[index].imdbID}&apikey=26332775`
     );
     const data = await res.json();
     setMovieInfo(data);

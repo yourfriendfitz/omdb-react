@@ -1,16 +1,18 @@
-import React, { Component } from "react";
+import React, { Component, Suspense } from "react";
 import { Route } from "react-router";
 import Layout from "./components/Layout";
-import Chart from "./components/Teleport";
+import Movies from "./components/Movies";
 
 export default class App extends Component {
   static displayName = App.name;
 
   render() {
     return (
-      <Layout>
-        <Route exactpath="/" component={Chart} />
-      </Layout>
+      <Suspense fallback={<div>Loading</div>}>
+        <Layout>
+          <Route exactpath="/" component={Movies} />
+        </Layout>
+      </Suspense>
     );
   }
 }

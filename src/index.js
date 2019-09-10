@@ -7,11 +7,10 @@ import * as serviceWorker from "./serviceWorker";
 
 const rootElement = document.getElementById("root");
 
-ReactDOM.render(
+ReactDOM.unstable_createRoot(rootElement).render(
   <BrowserRouter>
     <App />
-  </BrowserRouter>,
-  rootElement
+  </BrowserRouter>
 );
 
 serviceWorker.register();

@@ -127,7 +127,6 @@ const Example = () => {
       </div>
     );
   };
-  console.log(movieInfo);
   const goToIndex = async newIndex => {
     if (animating) return;
     await setActiveIndex(newIndex);

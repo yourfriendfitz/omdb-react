@@ -74,7 +74,9 @@ body {
   line-height: 1.5;
   color: #212529;
   text-align: left;
-  background-color: #786fa6;
+  background-image: linear-gradient(to right bottom, #786fa6, #f8a5c2);
+  height: 100vh;
+  background-size: cover;
 }
 
 [tabindex="-1"]:focus {

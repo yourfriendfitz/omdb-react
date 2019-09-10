@@ -13,6 +13,7 @@ import * as Palette from "./Palette";
 
 const StyledNavbar = styled(Navbar)`
   background: ${Palette.Secondary};
+  box-shadow: 0 2rem 4rem rgba(0, 0, 0, 0.2);
 `;
 
 const StyledNavbarBrand = styled(NavbarBrand)`

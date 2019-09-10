@@ -1,48 +1,98 @@
-import React, { useState, unstable_createResource } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Carousel,
   CarouselItem,
   CarouselControl,
   CarouselIndicators,
   CarouselCaption,
-  Container
+  Container as BootstrapContainer
 } from "reactstrap";
 import styled from "styled-components";
+import * as Palette from "./Palette";
 
 const StyledCarousel = styled(Carousel)`
   margin: auto;
-  margin-top: 48px;
   max-width: 350px;
   max-height: 70vh;
+  display: grid;
+  justify-content: center;
 `;
 
 const StyledImg = styled.img`
   margin: auto;
   border-radius: 8px;
   height: 400px;
+  width: 270px;
+  box-shadow: 0 2rem 4rem rgba(0, 0, 0, 0.2);
+`;
+
+const Container = styled(BootstrapContainer)`
+  display: grid;
+  justify-content: center;
+  margin-top: 8px;
+  background-image: linear-gradient(
+    to right bottom,
+    ${Palette.Secondary},
+    ${Palette.Primary}
+  );
+  padding: 8px;
+  padding-top: 16px;
+  padding-bottom: 16px;
+  border-radius: 8px;
+  width: 90vw;
+  box-shadow: 0 2rem 4rem rgba(0, 0, 0, 0.2);
+`;
+
+const InfoContainer = styled(BootstrapContainer)`
+  display: grid;
+  justify-content: center;
+  margin-top: 8px;
+  padding: 8px;
+  max-width: 300px;
+  height: 20vh;
+  background-image: linear-gradient(
+    to right bottom,
+    ${Palette.Light},
+    ${Palette.Primary}
+  );
+  border-radius: 8px;
+  color: ${Palette.DarkText};
+  box-shadow: 0 2rem 4rem rgba(0, 0, 0, 0.2);
 `;
 
 const Example = () => {
   const [search, setSearch] = useState({ query: "batman" });
-  const MoviesResource = unstable_createResource(async () => {
-    const resp = await fetch(`http://www.omdbapi.com/?s=batman&apikey=26332775`);
-      const data = await resp.json();
-      return data.Search;
-  });
-  const movies = MoviesResource.read();
-  const MoviesInfoResource = unstable_createResource(() => {
-    let movieInfoArray = [];
-    movies.map(movie => {
-      fetch(`http://www.omdbapi.com/?i=${movie.imdbID}&apikey=26332775`)
-        .then(res => res.json())
-        .then(data => movieInfoArray.push(data));
-    });
-    return movieInfoArray;
-  });
-  const moviesInfo = MoviesInfoResource.read();
   const [animating, setAnimating] = useState(false);
   const initialIndex = 0;
   const [activeIndex, setActiveIndex] = useState(initialIndex);
+  const [movieInfo, setMovieInfo] = useState({});
+  const [movies, setMovies] = useState([]);
+  useEffect(() => {
+    getMovies();
+  }, []);
+
+  const getMovies = async () => {
+    const resp = await fetch(
+      `http://www.omdbapi.com/?s=batman&apikey=26332775`
+    );
+    const data = await resp.json();
+    const movies = data.Search;
+    const response = await fetch(
+      `http://www.omdbapi.com/?i=${movies[0].imdbID}&apikey=26332775`
+    );
+    const res = await response.json();
+    const movieInfoObj = res;
+    setMovies(movies);
+    setMovieInfo(movieInfoObj);
+  };
+
+  const getMovieInfo = async index => {
+    const res = await fetch(
+      `http://www.omdbapi.com/?i=${movies[index].imdbID}&apikey=26332775`
+    );
+    const data = await res.json();
+    setMovieInfo(data);
+  };
 
   const onExiting = () => {
     setAnimating(true);
@@ -52,21 +102,36 @@ const Example = () => {
     setAnimating(false);
   };
 
-  const next = () => {
+  const next = async () => {
     if (animating) return;
     const nextIndex = activeIndex === movies.length - 1 ? 0 : activeIndex + 1;
-    setActiveIndex(nextIndex);
+    await setActiveIndex(nextIndex);
+    getMovieInfo(nextIndex);
   };
 
-  const previous = () => {
+  const previous = async () => {
     if (animating) return;
     const nextIndex = activeIndex === 0 ? movies.length - 1 : activeIndex - 1;
-    setActiveIndex(nextIndex);
+    await setActiveIndex(nextIndex);
+    getMovieInfo(nextIndex);
   };
 
-  const goToIndex = newIndex => {
+  const DisplayInfo = () => {
+    return (
+      <div>
+        <div className="text-center">
+          <h5>{movieInfo.Title}</h5>
+          <h6>{movieInfo.Director}</h6>
+        </div>
+        <p>{movieInfo.Plot}</p>
+      </div>
+    );
+  };
+  console.log(movieInfo);
+  const goToIndex = async newIndex => {
     if (animating) return;
-    setActiveIndex(newIndex);
+    await setActiveIndex(newIndex);
+    getMovieInfo(newIndex);
   };
   const slides = movies.map(item => {
     return (
@@ -95,6 +160,9 @@ const Example = () => {
           onClickHandler={next}
         />
       </StyledCarousel>
+      <InfoContainer className="overflow-auto">
+        {animating ? <div></div> : <DisplayInfo />}
+      </InfoContainer>
     </Container>
   );
 };

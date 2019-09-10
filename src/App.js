@@ -8,11 +8,9 @@ export default class App extends Component {
 
   render() {
     return (
-      <Suspense fallback={<div>Loading</div>}>
-        <Layout>
-          <Route exactpath="/" component={Movies} />
-        </Layout>
-      </Suspense>
+      <Layout>
+        <Route exactpath="/" component={Movies} />
+      </Layout>
     );
   }
 }
